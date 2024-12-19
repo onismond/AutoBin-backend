@@ -1,0 +1,60 @@
+from rest_framework import status
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.exceptions import AuthenticationFailed, APIException
+from rest_framework.permissions import AllowAny
+from .serializers import *
+from .models import *
+from . import utils
+
+
+class BinsView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        bins = Bin.objects.all()
+        serializer = BinSerializer(bins, many=True)
+        return Response({
+            'data': serializer.data,
+            'detail': 'Data retrieved successfully',
+        })
+
+
+class OrderPickupView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        bin_id = request.data['bin_id']
+        try:
+            bin = Bin.objects.get(pk=bin_id)
+            pickup = Pickup.objects.create(bin=bin).save()
+        except Bin.DoesNotExist:
+            return Response({'error': 'Invalid bin id'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({
+            'detail': 'Pickup ordered successfully',
+        })
+
+
+class UpdateBinView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        bin_id = request.GET['id']
+        bin_level = request.GET['level']
+        bin_weight = request.GET['weight']
+        try:
+            bin = Bin.objects.get(pk=bin_id)
+            if bin_level:
+                bin.current_level = bin_level
+            if bin_weight:
+                bin.current_weight = bin_weight
+            bin.save()
+        except Bin.DoesNotExist:
+            return Response({'error': 'Invalid bin id'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({
+            'detail': 'Bin updated successfully',
+        })
+
+
