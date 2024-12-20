@@ -10,10 +10,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-slw^2=*_ux#p+b3xz2*zp__1ql!6)q8dt#y@w!)d&^*_p&b%v3'
+SECRET_KEY = '1bcn!u-ln%@z70tr&hbptxc^3er&*=ucg$cua^8d@5fr67^b3s'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -298,6 +298,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'users.User'
 
 CORS_ALLOW_ALL_ORIGINS = True
+
+import django_heroku
+django_heroku.settings(locals())
 
 # daphne -b 127.0.0.1 -p8001 core.asgi:application
 # docker network create redis-network
