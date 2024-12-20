@@ -1,1 +1,1 @@
-web: python manage.py runserver 0.0.0.0:80
+web: gunicorn autobin.wsgi --log-file -
