@@ -6,6 +6,11 @@ class Bin(models.Model):
     serial_number = models.CharField(max_length=50, null=True, blank=True)
     current_level = models.IntegerField(default=0)
     current_weight = models.IntegerField(default=0)
+    bin_height = models.IntegerField(default=0)
+    pickups = models.ManyToManyField('Pickup', null=True, blank=True)
+    latitude = models.FloatField(null=True, blank=True)
+    longitude = models.FloatField(null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.name
@@ -15,8 +20,12 @@ class Bin(models.Model):
 
 
 class Pickup(models.Model):
-    bin = models.ForeignKey(Bin, on_delete=models.CASCADE)
-    date = models.DateTimeField(auto_now_add=True)
+    date = models.DateTimeField(auto_now=True)
+    amount = models.IntegerField(default=0)
+    cleared = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.bin.name
+        return f'id: {self.id}, amount: {self.amount}'
+
+    class Meta:
+        ordering = ['-date']

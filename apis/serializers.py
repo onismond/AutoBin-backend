@@ -7,6 +7,6 @@ class BinSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Bin
-        fields = ['id', 'name', 'serial_number', 'current_level', 'current_weight']
+        fields = ['id', 'name', 'serial_number', 'current_level', 'current_weight', 'updated_at']
 
 

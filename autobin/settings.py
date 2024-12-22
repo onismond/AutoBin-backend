@@ -13,7 +13,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = '1bcn!u-ln%@z70tr&hbptxc^3er&*=ucg$cua^8d@5fr67^b3s'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -109,10 +109,10 @@ JAZZMIN_SETTINGS = {
     "site_icon": None,
 
     # Welcome text on the login screen
-    "welcome_sign": "Welcome to Mangrove Ordering Admin",
+    "welcome_sign": "Welcome to Autobin Admin",
 
     # Copyright on the footer
-    "copyright": "Mangrove Executive Lounge and Bar Ltd",
+    "copyright": "Autobin UCC",
 
     # List of model admins to search from the search bar, search bar omitted if excluded
     # If you want to use a single search field you don't need to use a list, you can use a simple string
