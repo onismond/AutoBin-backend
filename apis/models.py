@@ -3,7 +3,8 @@ from django.db import models
 
 class Bin(models.Model):
     name = models.CharField(max_length=50, null=True, blank=True)
-    serial_number = models.CharField(max_length=50, null=True, blank=True)
+    color = models.CharField(max_length=50, null=True, blank=True)
+    serial_number = models.CharField(max_length=50, unique=True, null=True, blank=True)
     current_level = models.IntegerField(default=0)
     current_weight = models.IntegerField(default=0)
     bin_height = models.IntegerField(default=0)

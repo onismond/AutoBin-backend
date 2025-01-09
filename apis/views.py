@@ -22,6 +22,30 @@ class BinsView(APIView):
         })
 
 
+class AddBinView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        qr_value = request.data['qr_value']
+        bin_name = request.data['bin_name']
+        bin_color = request.data['bin_color']
+        latitude = request.data['latitude']
+        longitude = request.data['longitude']
+        bin = Bin.objects.filter(serial_number=qr_value).first()
+        if bin:
+            bin.name = bin_name
+            bin.color = bin_color
+            bin.latitude = float(latitude)
+            bin.longitude = float(longitude)
+            bin.save()
+        else:
+            bin = Bin(serial_number=qr_value, name=bin_name, color=bin_color, latitude=latitude, longitude=longitude)
+            bin.save()
+        return Response({
+            'detail': 'Bin added successfully',
+        })
+
+
 class OrderPickupView(APIView):
     permission_classes = [AllowAny]
 
