@@ -84,3 +84,41 @@ class UpdateBinView(APIView):
         })
 
 
+class CollectorPickupsView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        pickups = Pickup.objects.filter(cleared=False).all()
+        serializer = CollectorPickupSerializer(pickups, many=True)
+        return Response({
+            'data': serializer.data,
+            'detail': 'Data retrieved successfully',
+        })
+
+
+class MarkPickupCleared(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        serial_number = request.data['serial_number']
+        try:
+            bin = Bin.objects.get(serial_number=serial_number)
+        except Bin.DoesNotExist:
+            return Response({'error': 'Bin not found'}, status=status.HTTP_404_NOT_FOUND)
+        if bin.pickups.filter(cleared=False).exists():
+            for pickup in bin.pickups.filter(cleared=False).all():
+                pickup.cleared = True
+                pickup.save()
+        bin.current_level = 0
+        bin.current_weight = 0
+        bin.save()
+        return Response({
+            'detail': 'Pickup successfully marked as cleared',
+        })
+
+
+
+
+
+
+

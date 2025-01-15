@@ -1,14 +1,16 @@
 from django.db import models
+from users.models import User
 
 
 class Bin(models.Model):
     name = models.CharField(max_length=50, null=True, blank=True)
+    owner = models.ForeignKey(User, related_name='bin', on_delete=models.CASCADE)
     color = models.CharField(max_length=50, null=True, blank=True)
     serial_number = models.CharField(max_length=50, unique=True, null=True, blank=True)
     current_level = models.IntegerField(default=0)
     current_weight = models.IntegerField(default=0)
     bin_height = models.IntegerField(default=0)
-    pickups = models.ManyToManyField('Pickup', null=True, blank=True)
+    pickups = models.ManyToManyField('Pickup', related_name='bin', blank=True)
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True)
