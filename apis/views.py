@@ -76,6 +76,9 @@ class UpdateBinView(APIView):
                 bin.current_level = bin_level
             if bin_weight:
                 bin.current_weight = bin_weight
+            if (bin.bin_height - bin_level) / bin.bin_height <= 0.25:
+                if not bin.pickups.filter(cleared=False).exists():
+                    bin.pickups.create(amount=10)
             bin.save()
         except Bin.DoesNotExist:
             return Response({'error': 'Invalid bin id'}, status=status.HTTP_404_NOT_FOUND)
