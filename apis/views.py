@@ -39,7 +39,7 @@ class AddBinView(APIView):
             bin.longitude = float(longitude)
             bin.save()
         else:
-            bin = Bin(serial_number=qr_value, name=bin_name, owner=1, color=bin_color, latitude=latitude, longitude=longitude)
+            bin = Bin(serial_number=qr_value, name=bin_name, owner=User.objects.get(pk=1), color=bin_color, latitude=latitude, longitude=longitude)
             bin.save()
         return Response({
             'detail': 'Bin added successfully',
