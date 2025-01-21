@@ -10,7 +10,7 @@ class BinSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'serial_number', 'current_level', 'current_weight', 'updated_at']
 
     def get_current_level(self, bin):
-        return f'{((bin.bin_height - bin.current_level) / bin.bin_height) * 100}'
+        return int(((bin.bin_height - bin.current_level) / bin.bin_height) * 100)
 
 
 class CollectorPickupSerializer(serializers.ModelSerializer):

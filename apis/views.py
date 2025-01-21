@@ -36,7 +36,7 @@ class BinDetailView(APIView):
         return Response({
             'id': bin.id,
             'name': bin.name,
-            'current_level': ((bin.bin_height - bin.current_level) / bin.bin_height) * 100,
+            'current_level': int(((bin.bin_height - bin.current_level) / bin.bin_height) * 100),
             'current_weight': bin.current_weight,
             'detail': 'Data retrieved successfully',
         })
