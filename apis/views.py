@@ -22,6 +22,26 @@ class BinsView(APIView):
         })
 
 
+class BinDetailView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        bin_id = request.data.get('bin_id')
+        try:
+            bin = Bin.objects.get(id=bin_id)
+        except Bin.DoesNotExist:
+            return Response({'error': 'Invalid bin id'}, status=status.HTTP_404_NOT_FOUND)
+        except:
+            return Response({'error': 'An error occurred'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({
+            'id': bin.id,
+            'name': bin.name,
+            'current_level': ((bin.bin_height - bin.current_level) / bin.bin_height) * 100,
+            'current_weight': bin.current_weight,
+            'detail': 'Data retrieved successfully',
+        })
+
+
 class AddBinView(APIView):
     permission_classes = [AllowAny]
 
@@ -72,10 +92,8 @@ class UpdateBinView(APIView):
         bin_weight = request.GET['weight']
         try:
             bin = Bin.objects.get(pk=bin_id)
-            if bin_level:
-                bin.current_level = bin_level
-            if bin_weight:
-                bin.current_weight = bin_weight
+            bin.current_level = bin_level
+            bin.current_weight = bin_weight
             if (bin.bin_height - bin_level) / bin.bin_height <= 0.25:
                 if not bin.pickups.filter(cleared=False).exists():
                     bin.pickups.create(amount=10)
