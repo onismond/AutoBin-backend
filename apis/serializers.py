@@ -30,7 +30,8 @@ class CollectorPickupSerializer(serializers.ModelSerializer):
         return obj.bin.first().owner.contact
 
     def get_current_level(self, obj):
-        return obj.bin.first().current_level
+        bin = obj.bin.first()
+        return int(((bin.bin_height - bin.current_level) / bin.bin_height) * 100)
 
     def get_latitude(self, obj):
         return obj.bin.first().latitude

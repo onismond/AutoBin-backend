@@ -130,8 +130,8 @@ class MarkPickupCleared(APIView):
             for pickup in bin.pickups.filter(cleared=False).all():
                 pickup.cleared = True
                 pickup.save()
-        bin.current_level = 0
-        bin.current_weight = 0
+        # bin.current_level = 0
+        # bin.current_weight = 0
         bin.save()
         return Response({
             'detail': 'Pickup successfully marked as cleared',
