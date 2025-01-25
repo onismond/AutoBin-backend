@@ -1,3 +1,4 @@
+import requests
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -117,7 +118,7 @@ class CollectorPickupsView(APIView):
         })
 
 
-class MarkPickupCleared(APIView):
+class MarkPickupClearedView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
@@ -137,6 +138,19 @@ class MarkPickupCleared(APIView):
             'detail': 'Pickup successfully marked as cleared',
         })
 
+
+class RouteView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        start = request.data['start']
+        end = request.data['end']
+        osrm_url = f"https://router.project-osrm.org/route/v1/driving/{start};{end}?overview=full&geometries=polyline"
+        response = requests.get(osrm_url)
+        if response.status_code == 200:
+            return Response(response.json())
+        else:
+            return Response({"error": "Failed to fetch route data"}, status=response.status_code)
 
 
 

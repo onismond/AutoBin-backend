@@ -12,6 +12,7 @@ urlpatterns = [
 
     # Collector
     path('collector/pickups/', CollectorPickupsView.as_view(), name='collector_pickups'),
-    path('collector/pickup/mark-cleared/', MarkPickupCleared.as_view(), name='mark_pickup_cleared'),
+    path('collector/pickup/mark-cleared/', MarkPickupClearedView.as_view(), name='mark_pickup_cleared'),
+    path('route/', RouteView.as_view(), name='route'),
 
 ]
