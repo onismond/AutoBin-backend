@@ -95,7 +95,7 @@ class UpdateBinView(APIView):
             bin = Bin.objects.get(pk=bin_id)
             bin.current_level = bin_level
             bin.current_weight = bin_weight
-            if (bin.bin_height - bin.current_level) / bin.bin_height <= 0.25:
+            if (bin.bin_height - int(bin_level)) / bin.bin_height <= 0.25:
                 if not bin.pickups.filter(cleared=False).exists():
                     bin.pickups.create(amount=10)
             bin.save()
