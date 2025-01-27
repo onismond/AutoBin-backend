@@ -89,10 +89,12 @@ class UpdateBinView(APIView):
 
     def get(self, request):
         bin_id = request.GET['id']
-        bin_level = request.GET['level']
-        bin_weight = request.GET['weight']
+        bin_level = int(request.GET['level'])
+        bin_weight = int(request.GET['weight'])
         try:
             bin = Bin.objects.get(pk=bin_id)
+            if (bin_level > bin.bin_height):
+                return Response({'error': 'Invalid bin level'}, status=status.HTTP_400_BAD_REQUEST)
             bin.current_level = bin_level
             bin.current_weight = bin_weight
             if (bin.bin_height - int(bin_level)) / bin.bin_height <= 0.25:
