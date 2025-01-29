@@ -15,7 +15,7 @@ class BinsView(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
-        bins = Bin.objects.all()
+        bins = Bin.objects.all().order_by('-id')
         serializer = BinSerializer(bins, many=True)
         return Response({
             'data': serializer.data,
