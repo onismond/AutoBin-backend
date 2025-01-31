@@ -3,6 +3,7 @@
 *.pot
 *.pyc
 __pycache__
+staticfiles/
 
 # Backup files # 
 *.bak 
@@ -41,7 +42,9 @@ atlassian-ide-plugin.xml
 
 # Python # 
 *.py[cod] 
-*$py.class 
+*$py.class
+venv/
+env/
 
 # Distribution / packaging 
 .Python build/ 
