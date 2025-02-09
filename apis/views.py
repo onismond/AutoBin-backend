@@ -27,7 +27,7 @@ class HomeView(APIView):
                     pickup_amount += pickup.amount
                 else:
                     uncleared_pickups.append(pickup)
-            for transaction in bin.transactions.all():
+            for transaction in user.transactions.all():
                 total_paid += transaction.amount
         bin_serializer = BinSerializer(bins, many=True)
         pickups_serializer = PickupSerializer(uncleared_pickups, many=True)
