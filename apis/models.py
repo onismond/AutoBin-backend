@@ -1,5 +1,4 @@
 import uuid
-
 from django.db import models
 from users.models import User
 
@@ -43,6 +42,7 @@ class Transaction(models.Model):
     amount = models.FloatField(default=0.0)
     cleared = models.BooleanField(default=False)
     date = models.DateTimeField(auto_now_add=True)
+    owner = models.ForeignKey(User, related_name='transactions', on_delete=models.CASCADE, null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):

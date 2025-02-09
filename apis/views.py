@@ -50,7 +50,9 @@ class PayNowView(APIView):
         user = User.objects.get(id=1)
         # bins = Bin.objects.all()
         bins = user.bin.all()
-        transaction = user.transactions.create(amount=amount, contact=contact, cleared=False)
+        transaction = Transaction(amount=amount, contact=contact, cleared=False)
+        transaction.save()
+        transaction.owner = user
         transaction.save()
         pay_success = utils.send_pay_request(transaction, amount, user.name, user.email, contact)
         if not pay_success:
