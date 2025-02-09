@@ -14,6 +14,13 @@ class PickupAdmin(admin.ModelAdmin):
     readonly_fields = ['date']
 
 
+class TransactionAdmin(admin.ModelAdmin):
+    list_display = ['id', 'date', 'amount']
+    list_filter = ['date']
+    readonly_fields = ['date']
+
+
 admin.site.register(Bin, BinAdmin)
 admin.site.register(Pickup, PickupAdmin)
+admin.site.register(Transaction, TransactionAdmin)
 

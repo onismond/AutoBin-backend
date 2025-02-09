@@ -17,13 +17,10 @@ class UserView(APIView):
 
     def get(self, request):
         user = request.user
-        serializer = UserSerializer(user, context={'request': request}).data
-        response = Response()
-        response.data = {
-            'success': True,
-            'user': serializer,
-        }
-        return response
+        serializer = UserSerializer(user, context={'request': request})
+        return Response({
+            'user': serializer.data,
+        })
 
 
 class LoginView(APIView):
@@ -39,12 +36,12 @@ class LoginView(APIView):
             return Response({'error': 'Email not valid'}, status=status.HTTP_401_UNAUTHORIZED)
         if not user:
             return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
-        token = RefreshToken.for_user(user).access_token
+        token = str(RefreshToken.for_user(user).access_token)
+        serializer = UserSerializer(user, context={'request': request})
         return Response({
-            'success': True,
+            'user': serializer.data,
+            'token': token,
             'detail': 'Logged in successfully',
-            'user': UserSerializer(user, context={'request': request}).data,
-            'token': str(token),
         })
 
 
@@ -65,7 +62,6 @@ class CollectorLoginView(APIView):
             return Response({'error': 'Only Collector accounts can sign in'}, status=status.HTTP_401_UNAUTHORIZED)
         token = RefreshToken.for_user(user).access_token
         return Response({
-            'success': True,
             'detail': 'Logged in successfully',
             'user': UserSerializer(user, context={'request': request}).data,
             'token': str(token),
@@ -94,7 +90,6 @@ class RegisterView(APIView):
             # print(serializer.errors)
             return Response({'error': 'Please provide all necessary details'}, status=status.HTTP_400_BAD_REQUEST)
         return Response({
-            'success': True,
             'detail': 'Account created successfully'
         })
 
@@ -104,12 +99,9 @@ class LogoutView(APIView):
 
     def get(self, request):
         logout(request)
-        response = Response()
-        response.data = {
-            'success': True,
+        return Response({
             'detail': 'Logged out successfully',
-        }
-        return response
+        })
 
 
 class SendPhoneCodeView(APIView):
@@ -125,7 +117,6 @@ class SendPhoneCodeView(APIView):
             return Response({'error': 'User does not exist'}, status=status.HTTP_400_BAD_REQUEST)
         utils.send_phone_verification_code(user)
         return Response({
-            'success': True,
             'detail': 'Verification code sent successfully',
         })
 
@@ -150,12 +141,9 @@ class VerifyPhoneCodeView(APIView):
         user.is_active = True
         user.phone_verification_code = ''
         user.save()
-        response = Response()
-        response.data = {
-            'success': True,
+        return Response({
             'detail': 'Your phone number has been verified',
-        }
-        return response
+        })
 
 
 class SendPasswordChangeCodeView(APIView):
@@ -170,12 +158,9 @@ class SendPasswordChangeCodeView(APIView):
         except User.DoesNotExist:
             return Response({'error': 'User does not exist'}, status=status.HTTP_404_NOT_FOUND)
         utils.send_password_change_verification_code(user)
-        response = Response()
-        response.data = {
-            'success': True,
+        return Response({
             'detail': 'Verification code sent successfully',
-        }
-        return response
+        })
 
 
 class VerifyPasswordChangeCodeView(APIView):
@@ -195,12 +180,9 @@ class VerifyPasswordChangeCodeView(APIView):
         verified = utils.verify_password_change_code(user, code)
         if not verified:
             return Response({'error': 'The code you entered is invalid'}, status=status.HTTP_400_BAD_REQUEST)
-        response = Response()
-        response.data = {
-            'success': True,
+        return Response({
             'detail': 'Code verified',
-        }
-        return response
+        })
 
 
 class ChangePasswordView(APIView):
@@ -216,7 +198,6 @@ class ChangePasswordView(APIView):
             return Response({'error': 'Please provide a code'}, status=status.HTTP_400_BAD_REQUEST)
         if not password:
             return Response({'error': 'Please provide a password'}, status=status.HTTP_400_BAD_REQUEST)
-        response = Response()
         try:
             user = User.objects.get(email=request.data.get('email').strip().lower())
         except User.DoesNotExist:
@@ -227,13 +208,9 @@ class ChangePasswordView(APIView):
             user.set_password(password)
             user.password_change_verification_code = ''
             user.save()
-            success = True
-            detail = 'Password changed successfully'
-            response.data = {
-                'success': success,
-                'detail': detail,
-            }
-            return response
+            return Response({
+                'detail': 'Password changed successfully',
+            })
         return Response({'error': 'Password reset code is invalid'}, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -251,7 +228,6 @@ class ChangePasswordAuthenticatedView(APIView):
         user.set_password(new_password)
         user.save()
         return Response({
-            'success': True,
             'detail': 'Password changed successfully',
         })
 
@@ -260,15 +236,17 @@ class EditProfileView(APIView):
 
     def post(self, request):
         name = request.data.get('name', None)
+        user_name = request.data.get('user_name', None)
         contact = request.data.get('contact', None)
         user = request.user
         if name:
             user.name = name
+        if user_name:
+            user.username = user_name
         if contact:
             user.contact = contact
         user.save()
         return Response({
-            'success': True,
             'detail': 'Profile updated successfully',
         })
 

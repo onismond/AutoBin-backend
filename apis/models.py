@@ -1,3 +1,5 @@
+import uuid
+
 from django.db import models
 from users.models import User
 
@@ -20,13 +22,28 @@ class Bin(models.Model):
 
 
     class Meta:
-        ordering = ['name']
+        ordering = ['-id']
 
 
 class Pickup(models.Model):
-    date = models.DateTimeField(auto_now=True)
-    amount = models.IntegerField(default=0)
+    amount = models.FloatField(default=0.0)
     cleared = models.BooleanField(default=False)
+    date = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f'id: {self.id}, amount: {self.amount}'
+
+    class Meta:
+        ordering = ['-date']
+
+
+class Transaction(models.Model):
+    serial_number = models.UUIDField(default=uuid.uuid4, editable=False)
+    amount = models.FloatField(default=0.0)
+    cleared = models.BooleanField(default=False)
+    date = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f'id: {self.id}, amount: {self.amount}'
