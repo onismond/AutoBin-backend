@@ -3,7 +3,7 @@ version: '3.8'
 services:
   web:
     build: .
-    container_name: autobin_project
+    container_name: autobin
     restart: always
     env_file:
       - .env

@@ -4,6 +4,10 @@ FROM python:3.10.7
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
 
+# Set up build arguments
+ARG SECRET_KEY
+ENV SECRET_KEY=$SECRET_KEY
+
 # Set the working directory inside the container
 WORKDIR /app
 
