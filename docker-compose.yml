@@ -2,13 +2,13 @@ version: '3.8'
 
 services:
   web:
-    build: .
+    image: onismond/autobin:latest
     container_name: autobin
     restart: always
     env_file:
       - .env
     ports:
-      - "8000:8000"
+      - "8000:80"
     volumes:
       - .:/app
     command: >
