@@ -12,7 +12,7 @@ constantly==23.10.4
 cryptography==43.0.3
 daphne==4.1.2
 dj-database-url==2.3.0
-Django==5.0.7
+Django==5.0.13
 django-cors-headers==4.4.0
 django-heroku==0.3.1
 django-jazzmin==2.6.0

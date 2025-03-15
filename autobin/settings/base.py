@@ -103,7 +103,7 @@ JAZZMIN_SETTINGS = {
     "site_icon": None,
 
     # Welcome text on the login screen
-    "welcome_sign": "Welcome to Autobin Admin",
+    "welcome_sign": "Welcome to Autobin Adminn",
 
     # Copyright on the footer
     "copyright": "Autobin UCC",
