@@ -23,6 +23,9 @@ jobs:
       - name: Push Docker Image to Docker Hub
         run: docker push onismond/autobin:latest
 
+      - name: Log out of Docker Hub
+        run: docker logout
+
       - name: SSH into EC2 and Deploy
         uses: appleboy/ssh-action@master
         with:
