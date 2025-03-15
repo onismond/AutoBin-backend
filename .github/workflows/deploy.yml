@@ -3,7 +3,7 @@ name: Deploy Django Backend
 on:
   push:
     branches:
-      - main  # Change this to your deployment branch
+      - main
 
 jobs:
   deploy:
