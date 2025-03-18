@@ -35,6 +35,7 @@ jobs:
           script: |
             cd /home/ubuntu/autobin/AutoBin-backend
             git pull origin main
+            sudo docker rmi $(sudo docker images onismond/autobin -q) || true
             sudo docker pull onismond/autobin:latest
             sudo docker-compose down
             sudo docker-compose up -d

@@ -9,6 +9,7 @@ from rest_framework.permissions import AllowAny
 from .serializers import *
 from .models import *
 from . import utils
+from .Trustpay import Trustpay
 
 
 class HomeView(APIView):
@@ -54,7 +55,7 @@ class PayNowView(APIView):
         transaction.save()
         transaction.owner = user
         transaction.save()
-        pay_success = utils.send_pay_request(transaction, amount, user.name, user.email, contact)
+        pay_success = Trustpay.send_pay_request(transaction, amount, user.name, user.email, contact)
         if not pay_success:
             return Response({'error': 'Error processing payment request'}, status=status.HTTP_400_BAD_REQUEST)
         return Response({
