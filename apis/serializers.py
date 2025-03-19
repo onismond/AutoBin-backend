@@ -38,7 +38,7 @@ class TransactionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Pickup
-        fields = ['id', 'date', 'amount']
+        fields = ['id', 'date', 'amount', 'cleared']
 
 
 
