@@ -125,7 +125,7 @@ class TransactionsView(APIView):
 
     def get(self, request):
         user = User.objects.get(id=1)
-        serializer = TransactionSerializer(user.transactions.filter(cleared=True), many=True)
+        serializer = TransactionSerializer(user.transactions.all(), many=True)
         return Response({
             'data': serializer.data,
             'detail': 'Transactions retrieved successfully',
