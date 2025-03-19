@@ -41,6 +41,7 @@ class Transaction(models.Model):
     serial_number = models.UUIDField(default=uuid.uuid4, editable=False)
     amount = models.FloatField(default=0.0)
     cleared = models.BooleanField(default=False)
+    pickups = models.ManyToManyField(Pickup, related_name='transaction', blank=True)
     date = models.DateTimeField(auto_now_add=True)
     owner = models.ForeignKey(User, related_name='transactions', on_delete=models.CASCADE, null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True)
