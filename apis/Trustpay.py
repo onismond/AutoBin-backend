@@ -44,7 +44,8 @@ class Trustpay:
         ).hexdigest()
 
         headers = {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "Accept": "application/json"
         }
         payload = {
             "x-app-key": app_key,
@@ -63,17 +64,18 @@ class Trustpay:
             "returnUrl": return_url,
             "cancelUrl": cancel_url,
             "invoice": str(transaction.serial_number),
-            "orderId": str(transaction.id),
+            "orderId": str(transaction.id)
         }
         try:
             print("Calling Trustpay API")
             response = requests.post(base_url + 'callgw', headers=headers, json=payload)
             # response.raise_for_status()
-            print(response.json())
+            print("Response Status Code:", response.status_code)
+            print("Response Text:", response.text)
             if response.status_code == 200:
                 return True
         except RequestException as e:
-            print(e)
+            print("Request failed:", e)
         return False
 
     def check_pay_success(self, transaction):
