@@ -32,7 +32,7 @@ class Trustpay:
         timestamp = str(int(time.time()))
 
         message = (
-                app_key + nounce + timestamp + amount + first_name + last_name + email + address + city +
+                app_key + nounce + timestamp + str(amount) + first_name + last_name + email + address + city +
                 state + country + phone + return_url + cancel_url + str(transaction.serial_number) +
                 str(transaction.id)
         ).replace(" ", "")
