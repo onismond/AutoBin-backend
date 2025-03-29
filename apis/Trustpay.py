@@ -33,8 +33,8 @@ class Trustpay:
 
         message = (
                 app_key + nounce + timestamp + amount + first_name + last_name + email + address + city +
-                state + country + phone + return_url + cancel_url + transaction.serial_number +
-                transaction.id
+                state + country + phone + return_url + cancel_url + str(transaction.serial_number) +
+                str(transaction.id)
         ).replace(" ", "")
 
         signature = hmac.new(
