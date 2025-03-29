@@ -69,7 +69,7 @@ class Trustpay:
         try:
             print("Calling Trustpay API")
             print(payload)
-            print("Url:", return_url)
+            print("Url:", base_url + 'callgw')
             response = requests.post(base_url + 'callgw', headers=headers, json=payload)
             # response.raise_for_status()
             print("Response Status Code:", response.status_code)
