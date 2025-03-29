@@ -66,8 +66,9 @@ class Trustpay:
             "orderId": str(transaction.id),
         }
         try:
+            print("Calling Trustpay API")
             response = requests.post(base_url + 'callgw', headers=headers, json=payload)
-            # response.raise_for_status()
+            response.raise_for_status()
             print(response.json())
             if response.status_code == 200:
                 return True
