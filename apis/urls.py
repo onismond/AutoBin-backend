@@ -9,7 +9,7 @@ urlpatterns = [
     path('bin/order-pickup/', OrderPickupView.as_view(), name='order_pickup'),
     path('user/pickups/', UserPickupsView.as_view(), name='user_pickups'),
     path('user/transactions/', TransactionsView.as_view(), name='transactions'),
-    path('pay-now/', PayNowView.as_view(), name='pay_now'),
+    path('user/transactions/pay-now/', PayNowView.as_view(), name='pay_now'),
     path('transaction/confirm-pay/', ConfirmPayView.as_view(), name='confirm_pay'),
     path('transaction/cancel-pay/', CancelPayView.as_view(), name='cancel_pay'),
 
