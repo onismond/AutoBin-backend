@@ -1,4 +1,3 @@
-from django.contrib.auth import get_user_model
 from django.conf import settings
 from requests.exceptions import RequestException
 import requests
@@ -10,7 +9,7 @@ import time
 
 
 class Trustpay:
-    def oiij(self):
+    def __init__(self):
         self.TRUSTPAY_API_URL = settings.TRUSTPAY_API_URL
         self.TRUSTPAY_API_SECRET = settings.TRUSTPAY_API_SECRET
         self.TRUSTPAY_API_KEY = settings.TRUSTPAY_API_KEY

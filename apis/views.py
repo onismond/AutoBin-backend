@@ -49,13 +49,12 @@ class PayNowView(APIView):
         contact = request.data['contact']
         amount = request.data['amount']
         user = User.objects.get(id=1)
-        # bins = Bin.objects.all()
         bins = user.bin.all()
         transaction = Transaction(amount=amount, contact=contact, cleared=False)
         transaction.save()
         transaction.owner = user
         transaction.save()
-        pay_success = Trustpay.send_pay_request(transaction, amount, user.name, user.email, contact)
+        pay_success = Trustpay().send_pay_request(transaction, amount, user.name, user.email, contact)
         if not pay_success:
             return Response({'error': 'Error processing payment request'}, status=status.HTTP_400_BAD_REQUEST)
         return Response({
@@ -67,16 +66,15 @@ class ConfirmPayView(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
-        user = User.objects.get(id=1)
-        id = request.GET.get('id')
+        id = request.GET.get('orderId')
         invoice = request.GET.get('invoice')
         try:
             transaction = Transaction.objects.get(id=id)
         except Transaction.DoesNotExist:
             return Response({'error': 'Transaction not found'}, status=status.HTTP_400_BAD_REQUEST)
-        if (not (transaction in user.transactions.all())) and (transaction.serial_number != invoice):
+        if transaction.serial_number != invoice:
             return Response({'error': 'Transaction not found'}, status=status.HTTP_400_BAD_REQUEST)
-        pay_success = utils.check_pay_success(transaction)
+        pay_success = Trustpay().check_pay_success(transaction)
         if pay_success:
             transaction.cleared = True
             transaction.save()
@@ -91,14 +89,13 @@ class CancelPayView(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
-        user = User.objects.get(id=1)
-        id = request.GET.get('id')
+        id = request.GET.get('orderId')
         invoice = request.GET.get('invoice')
         try:
             transaction = Transaction.objects.get(id=id)
         except Transaction.DoesNotExist:
             return Response({'error': 'Transaction not found'}, status=status.HTTP_400_BAD_REQUEST)
-        if (not (transaction in user.transactions.all())) and (transaction.serial_number != invoice):
+        if transaction.serial_number != invoice:
             return Response({'error': 'Transaction not found'}, status=status.HTTP_400_BAD_REQUEST)
         transaction.delete()
         return Response({
