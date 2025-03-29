@@ -38,7 +38,7 @@ class Trustpay:
         ).replace(" ", "")
 
         signature = hmac.new(
-            key=self.TRUSTPAY_API_SECRET,
+            key=self.TRUSTPAY_API_SECRET.encode(),
             msg=message.encode(),
             digestmod=hashlib.sha256
         ).hexdigest()
