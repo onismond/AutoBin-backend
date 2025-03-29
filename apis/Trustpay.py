@@ -62,8 +62,8 @@ class Trustpay:
             "phone": phone,
             "returnUrl": return_url,
             "cancelUrl": cancel_url,
-            "invoice": transaction.serial_number,
-            "orderId": transaction.id,
+            "invoice": str(transaction.serial_number),
+            "orderId": str(transaction.id),
         }
         try:
             response = requests.post(base_url + 'callgw', headers=headers, json=payload)
