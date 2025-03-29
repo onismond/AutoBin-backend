@@ -41,7 +41,7 @@ class Trustpay:
             key=self.TRUSTPAY_API_SECRET.encode(),
             msg=message.encode(),
             digestmod=hashlib.sha256
-        ).hexdigest()
+        )
 
         headers = {
             "Content-Type": "application/json",
