@@ -21,6 +21,13 @@ CHANNEL_LAYERS = {
     },
 }
 
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
@@ -30,4 +37,4 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 TRUSTPAY_API_KEY = 'key'
 TRUSTPAY_API_SECRET = 'key'
-TRUSTPAY_API_URL = 'key'
+TRUSTPAY_API_URL = 'url'

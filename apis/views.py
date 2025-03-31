@@ -32,7 +32,7 @@ class HomeView(APIView):
             total_paid += transaction.amount
         bin_serializer = BinSerializer(bins, many=True)
         pickups_serializer = PickupSerializer(uncleared_pickups, many=True)
-        transaction_serializer = TransactionSerializer(user.transactions.all()[5], many=True)
+        transaction_serializer = TransactionSerializer(user.transactions.all()[:5], many=True)
         return Response({
             'due_amount': (pickup_amount - total_paid),
             'bins': bin_serializer.data,

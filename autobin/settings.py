@@ -300,9 +300,9 @@ AUTH_USER_MODEL = 'users.User'
 
 CORS_ALLOW_ALL_ORIGINS = True
 
-TRUSTPAY_API_KEY = "os.environ.get('TRUSTPAY_API_KEY')"
-TRUSTPAY_API_SECRET = "os.environ.get('TRUSTPAY_API_SECRET')"
-TRUSTPAY_API_URL = "os.environ.get('TRUSTPAY_API_URL')"
+TRUSTPAY_API_KEY = "key"
+TRUSTPAY_API_SECRET = "key"
+TRUSTPAY_API_URL = "url"
 
 #
 # import django_heroku
