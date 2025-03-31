@@ -7,6 +7,7 @@ ENV PYTHONUNBUFFERED=1
 # Set up build arguments
 ARG SECRET_KEY
 ENV SECRET_KEY=$SECRET_KEY
+ENV DJANGO_SETTINGS_MODULE=autobin.settings.prod
 
 # Set the working directory inside the container
 WORKDIR /app
