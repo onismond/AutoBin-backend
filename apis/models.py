@@ -7,7 +7,7 @@ class Bin(models.Model):
     name = models.CharField(max_length=50, null=True, blank=True)
     owner = models.ForeignKey(User, related_name='bin', on_delete=models.CASCADE, null=True, blank=True)
     color = models.CharField(max_length=50, null=True, blank=True)
-    serial_number = models.CharField(max_length=50, null=True, blank=True)
+    serial_number = models.CharField(max_length=50, null=False, blank=False)
     current_level = models.IntegerField(default=100)
     current_weight = models.IntegerField(default=0)
     bin_height = models.IntegerField(default=100)
