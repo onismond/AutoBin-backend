@@ -17,7 +17,7 @@ class Trustpay:
     def generate_random_string(self, length=15):
         return ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(length))
 
-    def send_pay_request(self, transaction, first_name, email, phone, last_name="", address="Accra, Ghana",
+    def send_pay_request(self, transaction, first_name, email, phone, last_name="last", address="Accra, Ghana",
                          city="Accra",
                          state="Greater Accra", country="GH"):
         return_url = (
@@ -50,7 +50,7 @@ class Trustpay:
             "x-timestamp": timestamp,
             "x-signature": signature,
             # "amount": str(transaction.amount),
-            "amount": "20",
+            "amount": 20.0,
             "firstName": first_name,
             "lastName": last_name,
             "email": email,
