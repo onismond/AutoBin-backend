@@ -50,15 +50,22 @@ class PayNowView(APIView):
         amount = request.data['amount']
         user = User.objects.get(id=1)
         bins = user.bin.all()
-        transaction = Transaction(amount=amount, contact=contact, cleared=False)
+        pickup_amount = 0
+        total_paid = 0
+        for bin in bins:
+            for pickup in bin.pickups.all():
+                if pickup.cleared:
+                    pickup_amount += pickup.amount
+        for transaction in user.transactions.filter(cleared=True):
+            total_paid += transaction.amount
+        transaction = Transaction(amount=(pickup_amount - total_paid), contact=contact, cleared=False)
         transaction.save()
         transaction.owner = user
         transaction.save()
-        pay_success = Trustpay().send_pay_request(transaction, amount, user.name, user.email, contact)
-        if not pay_success:
-            return Response({'error': 'Error processing payment request'}, status=status.HTTP_400_BAD_REQUEST)
+        data = Trustpay().send_pay_request(transaction, user.name, user.email, contact)
         return Response({
-            'detail': 'Payment request sent successfully',
+            'data': data,
+            'detail': 'Transactions created successfully',
         })
 
 
