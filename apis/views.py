@@ -42,12 +42,10 @@ class HomeView(APIView):
         })
 
 
-class PayNowView(APIView):
+class AmountDueView(APIView):
     permission_classes = [AllowAny]
 
-    def post(self, request):
-        contact = request.data['contact']
-        amount = request.data['amount']
+    def get(self, request):
         user = User.objects.get(id=1)
         bins = user.bin.all()
         pickup_amount = 0
@@ -58,11 +56,31 @@ class PayNowView(APIView):
                     pickup_amount += pickup.amount
         for transaction in user.transactions.filter(cleared=True):
             total_paid += transaction.amount
-        transaction = Transaction(amount=(pickup_amount - total_paid), contact=contact, cleared=False)
+        return Response({
+            'amount_due': (pickup_amount - total_paid),
+            'detail': 'Data retrieved successfully',
+        })
+
+
+class PayNowView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        user = User.objects.get(id=1)
+        bins = user.bin.all()
+        pickup_amount = 0
+        total_paid = 0
+        for bin in bins:
+            for pickup in bin.pickups.all():
+                if pickup.cleared:
+                    pickup_amount += pickup.amount
+        for transaction in user.transactions.filter(cleared=True):
+            total_paid += transaction.amount
+        transaction = Transaction(amount=(pickup_amount - total_paid), contact=user.contact, cleared=False)
         transaction.save()
         transaction.owner = user
         transaction.save()
-        data = Trustpay().send_pay_request(transaction, user.name, user.email, contact)
+        data = Trustpay().send_pay_request(transaction, user.name, user.email, user.contact)
         return Response({
             'data': data,
             'detail': 'Transactions created successfully',

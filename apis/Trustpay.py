@@ -44,6 +44,7 @@ class Trustpay:
         ).hexdigest()
 
         payload = {
+            "url": base_url + 'callgw',
             "x-app-key": app_key,
             "x-nonce": nounce,
             "x-timestamp": timestamp,
