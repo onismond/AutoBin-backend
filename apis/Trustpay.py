@@ -63,6 +63,7 @@ class Trustpay:
             "invoice": str(transaction.serial_number),
             "orderId": str(transaction.id)
         }
+        print(payload)
         return payload
 
     def check_pay_success(self, transaction):
