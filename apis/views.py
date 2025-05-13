@@ -304,7 +304,3 @@ class RouteView(APIView):
             return Response({"error": "Failed to fetch route data"}, status=response.status_code)
 
 
-
-
-
-
