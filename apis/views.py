@@ -13,10 +13,10 @@ from .Trustpay import Trustpay
 
 
 class HomeView(APIView):
-    permission_classes = [AllowAny]
+    # permission_classes = [AllowAny]
 
     def get(self, request):
-        user = User.objects.get(id=1)
+        user = request.user
         # bins = Bin.objects.all()
         bins = user.bin.all()
         pickup_amount = 0
