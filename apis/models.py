@@ -2,7 +2,7 @@ import uuid
 from django.db import models
 from users.models import User
 
-
+# Todo add uuid
 class Bin(models.Model):
     name = models.CharField(max_length=50, null=True, blank=True)
     owner = models.ForeignKey(User, related_name='bin', on_delete=models.CASCADE, null=True, blank=True)

@@ -132,9 +132,9 @@ class BinsView(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
-        # user = User.objects.get(id=1)
-        # bins = user.bins.all().order_by('-id')
-        bins = Bin.objects.all().order_by('-id')
+        user = User.objects.get(id=1)
+        bins = user.bin.all().order_by('-id')
+        # bins = Bin.objects.all().order_by('-id')
         serializer = BinSerializer(bins, many=True)
         return Response({
             'data': serializer.data,
@@ -242,7 +242,7 @@ class UpdateBinView(APIView):
         bin_weight = int(request.GET['weight'])
         try:
             bin = Bin.objects.get(pk=bin_id)
-            if (bin_level > bin.bin_height):
+            if bin_level > bin.bin_height:
                 return Response({'error': 'Invalid bin level'}, status=status.HTTP_400_BAD_REQUEST)
             bin.current_level = bin_level
             bin.current_weight = bin_weight

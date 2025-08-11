@@ -40,7 +40,10 @@
       </div>
     </div>
 
-    <!-- 🔹 Chart -->
+    <h2>Truck Locations Map</h2>
+    <div id="truck-map" style="height: 500px; margin-bottom: 50px"></div>
+
+    <!-- Chart -->
     <div class="card mb-4">
       <div class="card-header">User Signups (Last 7 Days)</div>
       <div class="card-body">
@@ -48,8 +51,42 @@
       </div>
     </div>
 
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
+      document.addEventListener("DOMContentLoaded", function() {
+        var map = L.map('truck-map').setView([0, 0], 2); // Initial world view
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+        }).addTo(map);
+
+        var carIcon = L.icon({
+            iconUrl: 'https://cdn-icons-png.flaticon.com/512/8581/8581325.png', // car icon image
+            iconSize: [32, 32],  // size of the icon
+            iconAnchor: [16, 32], // point of the icon which corresponds to marker's location
+            popupAnchor: [0, -32] // point from which the popup should open relative to the iconAnchor
+        });
+
+        var userLocations = {{ truck_locations|safe }};
+        if (userLocations.length > 0) {
+            var bounds = [];
+            userLocations.forEach(function(user) {
+                if (user.latitude && user.longitude) {
+                    var marker = L.marker([user.latitude, user.longitude], { icon: carIcon })
+                        .addTo(map)
+                        .bindPopup(user.name + ", " + user.contact);
+                    bounds.push([user.latitude, user.longitude]);
+                }
+            });
+
+            if (bounds.length > 0) {
+                map.fitBounds(bounds);
+            }
+        }
+      });
+
       const ctx = document.getElementById('signupChart').getContext('2d');
       new Chart(ctx, {
         type: 'bar',
