@@ -19,7 +19,7 @@ class Trustpay:
 
     def send_pay_request(self, transaction, first_name, email, phone, last_name="last", address="Accra, Ghana",
                          city="Accra",
-                         state="Greater Accra", country="GH"):
+                         state="Greater Accra", country="84"):
         return_url = (
             f"http://16.171.27.117/api/v1/transaction/confirm-pay/?orderId={transaction.id}&"
             f"invoice={transaction.serial_number}")
@@ -49,8 +49,8 @@ class Trustpay:
             "x-nonce": nounce,
             "x-timestamp": timestamp,
             "x-signature": signature,
-            # "amount": str(transaction.amount),
-            "amount": 20.0,
+            "amount": str(transaction.amount),
+            # "amount": 20.0,
             "firstName": first_name,
             "lastName": last_name,
             "email": email,
