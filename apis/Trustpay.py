@@ -17,14 +17,14 @@ class Trustpay:
     def generate_random_string(self, length=15):
         return ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(length))
 
-    def send_pay_request(self, transaction, first_name, email, phone, last_name="last", address="Accra, Ghana",
+    def send_pay_request(self, transaction, first_name, email, phone, last_name="last", address="Accra Road",
                          city="Accra",
-                         state="Greater Accra", country="84"):
+                         state="Accra", country="84"):
         return_url = (
-            f"http://16.171.27.117/api/v1/transaction/confirm-pay/?orderId={transaction.id}&"
+            f"http://13.53.168.208/api/v1/transaction/confirm-pay/?orderId={transaction.id}&"
             f"invoice={transaction.serial_number}")
         cancel_url = (
-            f"http://16.171.27.117/api/v1/transaction/cancel-pay/?orderId={transaction.id}&"
+            f"http://13.53.168.208/api/v1/transaction/cancel-pay/?orderId={transaction.id}&"
             f"invoice={transaction.serial_number}")
         base_url = self.TRUSTPAY_API_URL
         app_key = self.TRUSTPAY_API_KEY
@@ -45,24 +45,26 @@ class Trustpay:
 
         payload = {
             "url": base_url + 'callgw',
-            "x-app-key": app_key,
-            "x-nonce": nounce,
-            "x-timestamp": timestamp,
-            "x-signature": signature,
+            "api_key": app_key,
+            "nonce": nounce,
+            "timestamp": timestamp,
             "amount": str(transaction.amount),
-            # "amount": 20.0,
-            "firstName": first_name,
-            "lastName": last_name,
+            "signature": signature,
+            "first_name": first_name,
+            "last_name": last_name,
             "email": email,
+            "phone": phone,
             "address": address,
             "city": city,
             "state": state,
             "country": country,
-            "phone": phone,
-            "returnUrl": return_url,
-            "cancelUrl": cancel_url,
+            "return_url": return_url,
+            "cancel_url": cancel_url,
             "invoice": str(transaction.serial_number),
-            "orderId": str(transaction.id)
+            "order_id": str(transaction.id),
+            "payment_source": phone,
+            "payment_network": "MTN",
+            "payment_method": "momo",
         }
         print(payload)
         return payload
