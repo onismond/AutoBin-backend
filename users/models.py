@@ -38,6 +38,7 @@ class User(AbstractUser, PermissionsMixin):
     phone_verification_code = models.CharField(max_length=15, null=True, blank=True)
     password_change_verification_code = models.CharField(max_length=15, null=True, blank=True)
     role = models.CharField(max_length=15, choices=ROLES, default=ROLES[0][0])
+    collector_pickups = models.ManyToManyField("apis.Pickup")
     # transactions = models.ManyToManyField(Transaction, related_name='user', blank=True)
 
     objects = CustomUserManager()

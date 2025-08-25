@@ -175,10 +175,9 @@ class BinDetailView(APIView):
 
 
 class AddBinView(APIView):
-    permission_classes = [AllowAny]
 
     def post(self, request):
-        user = User.objects.get(id=1)
+        user = request.user
         qr_value = request.data['qr_value']
         bin_name = request.data['bin_name']
         bin_color = request.data['bin_color']
@@ -186,11 +185,12 @@ class AddBinView(APIView):
         longitude = request.data['longitude']
         bin = Bin.objects.filter(serial_number=qr_value).first()
         if bin:
-            bin.name = bin_name
-            bin.color = bin_color
-            bin.latitude = float(latitude)
-            bin.longitude = float(longitude)
-            bin.save()
+            if bin.owner == user:
+                bin.name = bin_name
+                bin.color = bin_color
+                bin.latitude = float(latitude)
+                bin.longitude = float(longitude)
+                bin.save()
         else:
             bin = Bin(serial_number=qr_value, name=bin_name, owner=user, color=bin_color, latitude=latitude, longitude=longitude)
             bin.save()
@@ -200,12 +200,14 @@ class AddBinView(APIView):
 
 
 class OrderPickupView(APIView):
-    permission_classes = [AllowAny]
 
     def post(self, request):
         bin_id = request.data['bin_id']
+        user = request.user
         try:
             bin = Bin.objects.get(pk=bin_id)
+            if not bin.owner == user:
+                return Response({'error': 'Bin was not added by user'}, status=status.HTTP_403_FORBIDDEN)
             if not bin.pickups.filter(cleared=False).exists():
                 bin.pickups.create(amount=10)
                 bin.save()
@@ -217,15 +219,26 @@ class OrderPickupView(APIView):
 
 
 class UserPickupsView(APIView):
-    permission_classes = [AllowAny]
 
     def get(self, request):
-        user = User.objects.get(pk=1)
+        user = request.user
         bins = user.bin.all()
         pickups = []
         for bin in bins:
             for pickup in bin.pickups.all():
                 pickups.append(pickup)
+        serializer = PickupSerializer(pickups, many=True)
+        return Response({
+            'data': serializer.data,
+            'detail': 'Data retrieved successfully',
+        })
+
+
+class UserPickupsCollectorView(APIView):
+
+    def get(self, request):
+        user = request.user
+        pickups = user.collector_pickups.all()
         serializer = PickupSerializer(pickups, many=True)
         return Response({
             'data': serializer.data,
@@ -270,10 +283,12 @@ class CollectorPickupsView(APIView):
 
 
 class MarkPickupClearedView(APIView):
-    permission_classes = [AllowAny]
 
     def post(self, request):
+        user = request.user
         serial_number = request.data['serial_number']
+        if user.role != 'collector':
+            return Response({'error': 'Permission denied'}, status=status.HTTP_403_FORBIDDEN)
         try:
             bin = Bin.objects.get(serial_number=serial_number)
         except Bin.DoesNotExist:
@@ -282,6 +297,10 @@ class MarkPickupClearedView(APIView):
             for pickup in bin.pickups.filter(cleared=False).all():
                 pickup.cleared = True
                 pickup.save()
+                if user.collector_pickups.count() == 0:
+                    user.collector_pickups.set([pickup])
+                else:
+                    user.collector_pickups.add(pickup)
         bin.current_level = bin.bin_height
         bin.current_weight = 0
         bin.save()
@@ -302,5 +321,4 @@ class RouteView(APIView):
             return Response(response.json())
         else:
             return Response({"error": "Failed to fetch route data"}, status=response.status_code)
-
 

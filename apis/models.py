@@ -2,15 +2,16 @@ import uuid
 from django.db import models
 from users.models import User
 
+
 # Todo add uuid
 class Bin(models.Model):
     name = models.CharField(max_length=50, null=True, blank=True)
     owner = models.ForeignKey(User, related_name='bin', on_delete=models.CASCADE, null=True, blank=True)
     color = models.CharField(max_length=50, null=True, blank=True)
     serial_number = models.CharField(max_length=50, null=False, blank=False)
-    current_level = models.IntegerField(default=100)
-    current_weight =models.FloatField(default=0.0)
-    bin_height = models.IntegerField(default=100)
+    current_level = models.IntegerField(default=50)
+    current_weight = models.FloatField(default=0.0)
+    bin_height = models.IntegerField(default=50)
     pickups = models.ManyToManyField('Pickup', related_name='bin', blank=True)
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
@@ -18,7 +19,6 @@ class Bin(models.Model):
 
     def __str__(self):
         return self.name
-
 
     class Meta:
         ordering = ['-id']

@@ -33,10 +33,10 @@ class Trustpay:
 
         message = (
                 app_key + nounce + timestamp + str(transaction.amount) + first_name + last_name + email + address + city +
-                state + country + phone + return_url + cancel_url + str(transaction.serial_number) +
+                state + country + phone + str(transaction.serial_number) +
                 str(transaction.id)
         ).replace(" ", "")
-
+        print(message)
         signature = hmac.new(
             key=self.TRUSTPAY_API_SECRET.encode(),
             msg=message.encode(),
@@ -44,7 +44,7 @@ class Trustpay:
         ).hexdigest()
 
         payload = {
-            "url": base_url + 'callgw',
+            # "url": base_url + 'callgw',
             "api_key": app_key,
             "nonce": nounce,
             "timestamp": timestamp,
@@ -58,16 +58,26 @@ class Trustpay:
             "city": city,
             "state": state,
             "country": country,
-            "return_url": return_url,
-            "cancel_url": cancel_url,
+            # "return_url": return_url,
+            # "cancel_url": cancel_url,
             "invoice": str(transaction.serial_number),
             "order_id": str(transaction.id),
             "payment_source": phone,
             "payment_network": "MTN",
             "payment_method": "momo",
         }
+
+
+        headers = {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+        }
+        response = requests.post(base_url, headers=headers, json=payload)
         print(payload)
-        return payload
+        print(response.text)
+        print(self.TRUSTPAY_API_KEY)
+        print(self.TRUSTPAY_API_SECRET)
+        return response.text
 
     def check_pay_success(self, transaction):
         return True

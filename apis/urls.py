@@ -8,6 +8,7 @@ urlpatterns = [
     path('bin/add/', AddBinView.as_view(), name='add_bin'),
     path('bin/order-pickup/', OrderPickupView.as_view(), name='order_pickup'),
     path('user/pickups/', UserPickupsView.as_view(), name='user_pickups'),
+    path('user/pickups/collector/', UserPickupsCollectorView.as_view(), name='user_pickups_collector'),
     path('user/transactions/', TransactionsView.as_view(), name='transactions'),
     path('user/transactions/amount-due/', AmountDueView.as_view(), name='amount_due'),
     path('user/transactions/pay-now/', PayNowView.as_view(), name='pay_now'),
