@@ -63,10 +63,11 @@ class AmountDueView(APIView):
 
 
 class PayNowView(APIView):
-    permission_classes = [AllowAny]
 
-    def get(self, request):
-        user = User.objects.get(id=1)
+    def post(self, request):
+        payment_network = request.data['payment_network']
+        contact = request.data['contact']
+        user = request.user
         bins = user.bin.all()
         pickup_amount = 0
         total_paid = 0
@@ -80,11 +81,10 @@ class PayNowView(APIView):
         transaction.save()
         transaction.owner = user
         transaction.save()
-        data = Trustpay().send_pay_request(transaction, user.name, user.email, user.contact)
-        return Response({
-            'data': data,
-            'detail': 'Transactions created successfully',
-        })
+        success, message = Trustpay().send_pay_request(transaction, user.name, user.email, contact, payment_network)
+        if not success:
+            return Response({'error': message}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'detail': message})
 
 
 class ConfirmPayView(APIView):

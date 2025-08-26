@@ -17,7 +17,7 @@ class Trustpay:
     def generate_random_string(self, length=15):
         return ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(length))
 
-    def send_pay_request(self, transaction, first_name, email, phone, last_name="last", address="Accra Road",
+    def send_pay_request(self, transaction, first_name, email, phone, payment_network, last_name="last", address="Accra Road",
                          city="Accra",
                          state="Accra", country="84"):
         return_url = (
@@ -63,7 +63,7 @@ class Trustpay:
             "invoice": str(transaction.serial_number),
             "order_id": str(transaction.id),
             "payment_source": phone,
-            "payment_network": "MTN",
+            "payment_network": payment_network,
             "payment_method": "momo",
         }
 
@@ -74,10 +74,15 @@ class Trustpay:
         }
         response = requests.post(base_url, headers=headers, json=payload)
         print(payload)
-        print(response.text)
-        print(self.TRUSTPAY_API_KEY)
-        print(self.TRUSTPAY_API_SECRET)
-        return response.text
+        data = response.json()
+        print(response.status_code)
+        print(data)
+        if response.status_code == 200 or response.status_code == 202:
+            transaction.payment_reference = data["reference"]
+            transaction.save()
+            return True, "Transaction successfully initiated"
+        return False, "Transaction failed"
+
 
     def check_pay_success(self, transaction):
         return True

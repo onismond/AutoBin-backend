@@ -38,3 +38,4 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 TRUSTPAY_API_KEY = 'key'
 TRUSTPAY_API_SECRET = 'key'
 TRUSTPAY_API_URL = 'key'
+TRUSTPAY_API_URL_RETURN = 'key'
