@@ -13,11 +13,9 @@ from .Trustpay import Trustpay
 
 
 class HomeView(APIView):
-    # permission_classes = [AllowAny]
 
     def get(self, request):
         user = request.user
-        # bins = Bin.objects.all()
         bins = user.bin.all()
         pickup_amount = 0
         uncleared_pickups = []
@@ -43,10 +41,9 @@ class HomeView(APIView):
 
 
 class AmountDueView(APIView):
-    permission_classes = [AllowAny]
 
     def get(self, request):
-        user = User.objects.get(id=1)
+        user = request.user
         bins = user.bin.all()
         pickup_amount = 0
         total_paid = 0
@@ -84,48 +81,31 @@ class PayNowView(APIView):
         success, message = Trustpay().send_pay_request(transaction, user.name, user.email, contact, payment_network)
         if not success:
             return Response({'error': message}, status=status.HTTP_400_BAD_REQUEST)
-        return Response({'detail': message})
+        return Response({
+            'id': transaction.id,
+            'invoice': transaction.serial_number,
+            'detail': message,
+        })
 
 
 class ConfirmPayView(APIView):
     permission_classes = [AllowAny]
 
-    def get(self, request):
-        id = request.GET.get('orderId')
-        invoice = request.GET.get('invoice')
+    def post(self, request):
+        id = request.data.get('id')
+        invoice = request.data.get('invoice')
         try:
             transaction = Transaction.objects.get(id=id)
         except Transaction.DoesNotExist:
             return Response({'error': 'Transaction not found'}, status=status.HTTP_400_BAD_REQUEST)
-        if transaction.serial_number != invoice:
+        if str(transaction.serial_number) != invoice:
             return Response({'error': 'Transaction not found'}, status=status.HTTP_400_BAD_REQUEST)
-        pay_success = Trustpay().check_pay_success(transaction)
+        pay_success, message = Trustpay().check_pay_success(transaction)
         if pay_success:
             transaction.cleared = True
             transaction.save()
-        else:
-            return Response({'error': 'Payment not completed'}, status=status.HTTP_400_BAD_REQUEST)
-        return Response({
-            'detail': 'Payment confirmed successfully'
-        })
-
-
-class CancelPayView(APIView):
-    permission_classes = [AllowAny]
-
-    def get(self, request):
-        id = request.GET.get('orderId')
-        invoice = request.GET.get('invoice')
-        try:
-            transaction = Transaction.objects.get(id=id)
-        except Transaction.DoesNotExist:
-            return Response({'error': 'Transaction not found'}, status=status.HTTP_400_BAD_REQUEST)
-        if transaction.serial_number != invoice:
-            return Response({'error': 'Transaction not found'}, status=status.HTTP_400_BAD_REQUEST)
-        transaction.delete()
-        return Response({
-            'detail': 'Payment canceled successfully'
-        })
+            return Response({'detail': message})
+        return Response({'error': message}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class BinsView(APIView):

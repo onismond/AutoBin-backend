@@ -13,7 +13,6 @@ urlpatterns = [
     path('user/transactions/amount-due/', AmountDueView.as_view(), name='amount_due'),
     path('user/transactions/pay-now/', PayNowView.as_view(), name='pay_now'),
     path('transaction/confirm-pay/', ConfirmPayView.as_view(), name='confirm_pay'),
-    path('transaction/cancel-pay/', CancelPayView.as_view(), name='cancel_pay'),
 
     # Autobin Device
     path('bin/update/', UpdateBinView.as_view(), name='update_bin'),

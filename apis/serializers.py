@@ -37,9 +37,8 @@ class TransactionSerializer(serializers.ModelSerializer):
     date = serializers.DateTimeField(format="%d %b, %Y %I:%M%p", read_only=True)
 
     class Meta:
-        model = Pickup
+        model = Transaction
         fields = ['id', 'date', 'amount', 'cleared']
-
 
 
 class CollectorPickupSerializer(serializers.ModelSerializer):
@@ -48,6 +47,7 @@ class CollectorPickupSerializer(serializers.ModelSerializer):
     current_level = serializers.SerializerMethodField()
     latitude = serializers.SerializerMethodField()
     longitude = serializers.SerializerMethodField()
+
     class Meta:
         model = Pickup
         fields = ['id', 'user_name', 'user_contact', 'current_level', 'latitude', 'longitude']

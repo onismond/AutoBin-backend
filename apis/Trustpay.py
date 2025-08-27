@@ -11,28 +11,31 @@ import time
 class Trustpay:
     def __init__(self):
         self.TRUSTPAY_API_URL = settings.TRUSTPAY_API_URL
+        self.TRUSTPAY_API_URL_RETURN = settings.TRUSTPAY_API_URL_RETURN
         self.TRUSTPAY_API_SECRET = settings.TRUSTPAY_API_SECRET
         self.TRUSTPAY_API_KEY = settings.TRUSTPAY_API_KEY
 
     def generate_random_string(self, length=15):
         return ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(length))
 
-    def send_pay_request(self, transaction, first_name, email, phone, payment_network, last_name="last", address="Accra Road",
+    def send_pay_request(self, transaction, first_name, email, phone, payment_network, last_name="last",
+                         address="Accra Road",
                          city="Accra",
                          state="Accra", country="84"):
-        return_url = (
-            f"http://13.53.168.208/api/v1/transaction/confirm-pay/?orderId={transaction.id}&"
-            f"invoice={transaction.serial_number}")
-        cancel_url = (
-            f"http://13.53.168.208/api/v1/transaction/cancel-pay/?orderId={transaction.id}&"
-            f"invoice={transaction.serial_number}")
+        # return_url = (
+        #     f"http://13.53.168.208/api/v1/transaction/confirm-pay/?orderId={transaction.id}&"
+        #     f"invoice={transaction.serial_number}")
+        # cancel_url = (
+        #     f"http://13.53.168.208/api/v1/transaction/cancel-pay/?orderId={transaction.id}&"
+        #     f"invoice={transaction.serial_number}")
         base_url = self.TRUSTPAY_API_URL
         app_key = self.TRUSTPAY_API_KEY
         nounce = self.generate_random_string()
         timestamp = str(int(time.time()))
 
         message = (
-                app_key + nounce + timestamp + str(transaction.amount) + first_name + last_name + email + address + city +
+                app_key + nounce + timestamp + str(
+            transaction.amount) + first_name + last_name + email + address + city +
                 state + country + phone + str(transaction.serial_number) +
                 str(transaction.id)
         ).replace(" ", "")
@@ -67,15 +70,14 @@ class Trustpay:
             "payment_method": "momo",
         }
 
-
         headers = {
             "Content-Type": "application/json",
             "Accept": "application/json",
         }
         response = requests.post(base_url, headers=headers, json=payload)
         print(payload)
-        data = response.json()
         print(response.status_code)
+        data = response.json()
         print(data)
         if response.status_code == 200 or response.status_code == 202:
             transaction.payment_reference = data["reference"]
@@ -83,6 +85,22 @@ class Trustpay:
             return True, "Transaction successfully initiated"
         return False, "Transaction failed"
 
-
     def check_pay_success(self, transaction):
-        return True
+        base_url = self.TRUSTPAY_API_URL_RETURN
+        payload = {
+            "reference": transaction.payment_reference,
+        }
+        headers = {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+        }
+        response = requests.post(base_url, headers=headers, json=payload)
+        print(payload)
+        print(response.status_code)
+        data = response.json()
+        print(data)
+        if response.status_code == 200 or response.status_code == 202:
+            return True, data['message']
+            # if data['status'] == 'successful':
+            #     return True, data['message']
+        return False, data['message']

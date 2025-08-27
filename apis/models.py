@@ -38,7 +38,7 @@ class Pickup(models.Model):
 
 
 class Transaction(models.Model):
-    serial_number = models.UUIDField(default=uuid.uuid4, editable=False)
+    serial_number = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     payment_reference = models.CharField(max_length=50, null=True, blank=True)
     amount = models.FloatField(default=0.0)
     cleared = models.BooleanField(default=False)

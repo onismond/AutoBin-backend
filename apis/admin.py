@@ -53,9 +53,10 @@ class PickupAdmin(admin.ModelAdmin):
 
 
 class TransactionAdmin(admin.ModelAdmin):
-    list_display = ['id', 'date', 'amount']
-    list_filter = ['date']
-    readonly_fields = ['date']
+    list_display = ['id', 'amount', 'cleared', 'date']
+    list_filter = ['date', 'cleared']
+    search_fields = ['amount', 'serial_number', 'payment_reference']
+    readonly_fields = ['serial_number', 'payment_reference', 'date']
 
 
 admin.site.index = custom_index
