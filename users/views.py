@@ -33,9 +33,9 @@ class LoginView(APIView):
         if is_email:
             user = authenticate(request, email=email, password=password)
         else:
-            return Response({'error': 'Email not valid'}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({'error': 'Email not valid'}, status=status.HTTP_400_BAD_REQUEST)
         if not user:
-            return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({'error': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
         token = str(RefreshToken.for_user(user).access_token)
         serializer = UserSerializer(user, context={'request': request})
         return Response({
@@ -55,11 +55,11 @@ class CollectorLoginView(APIView):
         if is_email:
             user = authenticate(request, email=email, password=password)
         else:
-            return Response({'error': 'Email not valid'}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({'error': 'Email not valid'}, status=status.HTTP_400_BAD_REQUEST)
         if not user:
-            return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({'error': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
         if user.role != 'collector':
-            return Response({'error': 'Only Collector accounts can sign in'}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({'error': 'Only Collector accounts can sign in'}, status=status.HTTP_400_BAD_REQUEST)
         token = RefreshToken.for_user(user).access_token
         return Response({
             'detail': 'Logged in successfully',
@@ -251,7 +251,17 @@ class EditProfileView(APIView):
         })
 
 
-
+class UpdateCollectorLocation(APIView):
+    def post(self, request):
+        user = request.user
+        latitude = request.data.get('latitude', None)
+        longitude = request.data.get('longitude', None)
+        if user.role != 'collector':
+            return Response({'error': 'Collector account required'}, status=status.HTTP_403_FORBIDDEN)
+        if not latitude or not longitude:
+            return Response({'error': 'Please provide latitude and longitude'}, status=status.HTTP_400_BAD_REQUEST)
+        user.set_collector_location(latitude, longitude)
+        return Response({'detail': 'Update successful'})
 
 
 

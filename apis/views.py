@@ -230,21 +230,23 @@ class UpdateBinView(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
-        bin_id = request.GET['id']
+        serial_number = request.GET['serial_number']
         bin_level = int(request.GET['level'])
-        bin_weight = int(request.GET['weight'])
+        bin_weight = float(request.GET['weight'])
+        if not bin_level or not bin_weight or not serial_number:
+            return Response({'error': 'Provide serial_number, level and weight'}, status=status.HTTP_404_NOT_FOUND)
         try:
-            bin = Bin.objects.get(pk=bin_id)
+            bin = Bin.objects.filter(serial_number=serial_number).first()
             if bin_level > bin.bin_height:
                 return Response({'error': 'Invalid bin level'}, status=status.HTTP_400_BAD_REQUEST)
             bin.current_level = bin_level
             bin.current_weight = bin_weight
             if (bin.bin_height - int(bin_level)) / bin.bin_height <= 0.25:
                 if not bin.pickups.filter(cleared=False).exists():
-                    bin.pickups.create(amount=10)
+                    bin.pickups.create(amount=round(5 + bin_weight * 2, 2))
             bin.save()
         except Bin.DoesNotExist:
-            return Response({'error': 'Invalid bin id'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': 'Invalid bin serial_number'}, status=status.HTTP_404_NOT_FOUND)
         return Response({
             'detail': 'Bin updated successfully',
         })
