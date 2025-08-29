@@ -16,5 +16,6 @@ urlpatterns = [
     path('change-password/', ChangePasswordView.as_view(), name='change_password'),
     path('change-password/authenticated/', ChangePasswordAuthenticatedView.as_view(), name='change_password_authenticated'),
     path('profile/edit/', EditProfileView.as_view(), name='edit_profile'),
+    path('collector/update-location/', UpdateCollectorLocation.as_view(), name='update_collector_location'),
 
 ]
