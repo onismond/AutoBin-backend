@@ -223,7 +223,7 @@ class ChangePasswordAuthenticatedView(APIView):
             return Response({'error': 'Please provide new and old password'}, status=status.HTTP_400_BAD_REQUEST)
         user = authenticate(email=request.user.email, password=old_password)
         if user is None:
-            return Response({'error': 'Old password is incorrect'}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({'error': 'Old password is incorrect'}, status=status.HTTP_400_BAD_REQUEST)
         user = request.user
         user.set_password(new_password)
         user.save()
