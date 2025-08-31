@@ -15,3 +15,26 @@ services:
       sh -c "python manage.py migrate &&
              python manage.py collectstatic --noinput &&
              gunicorn --bind 0.0.0.0:8000 autobin.wsgi:application --access-logfile - --error-logfile -"
+    depends_on:
+      - redis
+
+  websocket:
+    image: onismond/autobin:latest
+    container_name: autobin
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "8001:8001"
+    volumes:
+      - .:/app
+    command: >
+      sh -c "daphne -b 0.0.0.0 -p 8001 autobin.asgi:application"
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+

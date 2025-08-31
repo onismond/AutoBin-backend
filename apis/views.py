@@ -6,6 +6,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.exceptions import AuthenticationFailed, APIException
 from rest_framework.permissions import AllowAny
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 from .serializers import *
 from .models import *
 from . import utils
@@ -236,14 +238,29 @@ class UpdateBinView(APIView):
         if not bin_level or not bin_weight or not serial_number:
             return Response({'error': 'Provide serial_number, level and weight'}, status=status.HTTP_404_NOT_FOUND)
         try:
-            bin = Bin.objects.filter(serial_number=serial_number).first()
+            bin = Bin.objects.get(serial_number=serial_number)
             if bin_level > bin.bin_height:
                 return Response({'error': 'Invalid bin level'}, status=status.HTTP_400_BAD_REQUEST)
             bin.current_level = bin_level
             bin.current_weight = bin_weight
-            if (bin.bin_height - int(bin_level)) / bin.bin_height <= 0.25:
+            if (bin.bin_height - int(bin_level)) / bin.bin_height >= 0.75:
                 if not bin.pickups.filter(cleared=False).exists():
                     bin.pickups.create(amount=round(5 + bin_weight * 2, 2))
+                    channel_layer = get_channel_layer()
+                    async_to_sync(channel_layer.group_send)(
+                        "drivers",
+                        {
+                            "type": "bin_update",
+                            "data": {
+                                "id": bin.id,
+                                "user_name": bin.owner.name,
+                                "user_contact": bin.owner.contact,
+                                "current_level": int(((bin.bin_height - bin.current_level) / bin.bin_height) * 100),
+                                "latitude": bin.latitude,
+                                "longitude": bin.longitude,
+                            },
+                        }
+                    )
             bin.save()
         except Bin.DoesNotExist:
             return Response({'error': 'Invalid bin serial_number'}, status=status.HTTP_404_NOT_FOUND)
@@ -277,6 +294,7 @@ class MarkPickupClearedView(APIView):
             return Response({'error': 'Bin not found'}, status=status.HTTP_404_NOT_FOUND)
         if bin.pickups.filter(cleared=False).exists():
             for pickup in bin.pickups.filter(cleared=False).all():
+                pickup.amount = round(5 + bin.current_weight * 2, 2)
                 pickup.cleared = True
                 pickup.save()
                 if user.collector_pickups.count() == 0:

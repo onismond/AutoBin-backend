@@ -23,6 +23,7 @@ THIRD_PARTY_APPS = [
 ]
 
 PROJECT_APPS = [
+    'channels',
     'users',
     'apis',
 ]
