@@ -34,7 +34,7 @@ class Pickup(models.Model):
         return f'id: {self.id}, amount: {self.amount}'
 
     class Meta:
-        ordering = ['-date']
+        ordering = ['-id']
 
 
 class Transaction(models.Model):
@@ -52,4 +52,4 @@ class Transaction(models.Model):
         return f'id: {self.id}, amount: {self.amount}'
 
     class Meta:
-        ordering = ['-date']
+        ordering = ['-id']
