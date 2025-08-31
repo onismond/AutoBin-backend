@@ -20,7 +20,7 @@ services:
 
   websocket:
     image: onismond/autobin:latest
-    container_name: autobin
+    container_name: autobin_ws
     restart: always
     env_file:
       - .env
