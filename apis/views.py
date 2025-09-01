@@ -235,8 +235,8 @@ class UpdateBinView(APIView):
         serial_number = request.GET['serial_number']
         bin_level = int(request.GET['level'])
         bin_weight = float(request.GET['weight'])
-        if not bin_level or not bin_weight or not serial_number:
-            return Response({'error': 'Provide serial_number, level and weight'}, status=status.HTTP_404_NOT_FOUND)
+        # if not bin_level or not bin_weight or not serial_number:
+        #     return Response({'error': 'Provide serial_number, level and weight'}, status=status.HTTP_404_NOT_FOUND)
         try:
             bin = Bin.objects.get(serial_number=serial_number)
             if bin_level > bin.bin_height:
